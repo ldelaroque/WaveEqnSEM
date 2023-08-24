@@ -69,7 +69,7 @@ class WaveEquationSolver1D:
         return jacobian, jacobian_inv, l1d
     
     def initialize_elastic_parameters(self):
-        # ... Initialize elastic parameters
+        # Initialization of elastic parameters
         el_span = 20                     # Number of elements spanning the Low velocity zone
         percent = 0.3                    # percentage of velocity reduction 
         a = el_span * self.N + 1         # width of the fault zone in grid points
@@ -91,9 +91,7 @@ class WaveEquationSolver1D:
         self.mass_matrix_glob = np.zeros(2 * self.NG) 
         
         for i in range(1, self.NEL+1): 
-            # ------------------------------------
-            # Elemental Mass matrix
-            # ------------------------------------
+            # Computing the elementary mass matrix
             for l in range(0, self.N+1):
                 m += 1
                 self.mass_matrix_elem[l] = rho[m] * self.w[l] * self.jacobian    #stored as a vector since it's diagonal
@@ -101,13 +99,12 @@ class WaveEquationSolver1D:
             # ------------------------------------
             for j in range(0, self.N+1): 
                 k = k + 1
-                if i>1:
-                    if j==0:
+                if i > 1:
+                    if j == 0:
                         k = k - 1
                 self.mass_matrix_glob[k] = self.mass_matrix_glob[k] + self.mass_matrix_elem[j]
         
-        # Inverse matrix of M 
-        # --------------------------------------------------------------- 
+        # Computing the inverse matrix of M 
         self.mass_matrix_inv = np.identity(self.NG)
         for i in range(0, self.NG):
             self.mass_matrix_inv[i,i] = 1./ self.mass_matrix_glob[i]
@@ -115,16 +112,13 @@ class WaveEquationSolver1D:
     
     def global_stiffness_matrix(self, mu, jacobian, jacobian_inv, l1d):
         # Assembling the stiffness matrix
-        
         self.stif_matrix_glob = np.zeros([self.NG, self.NG])
         xe = 0 
         
         for e in range(1, self.NEL + 1):
             i0 = (e - 1) * self.N + 1
             j0 = i0
-            # ------------------------------------
-            # Elemental Stiffness Matrix
-            # ------------------------------------
+            # Computing the elementary stiffness matrix
             for i in range(-1,self. N):
                 for j in range(-1, self.N):
                     sum = 0
@@ -137,7 +131,7 @@ class WaveEquationSolver1D:
                 for j in range(-1, self.N):
                     self.stif_matrix_glob[i0+i, j0+j] += self.stif_matrix_elem[i+1, j+1]
 
-        pass
+        #pass
     
     def solve_wave_equation(self, rho, vs):
         # Solving the wave equation
@@ -172,7 +166,7 @@ class WaveEquationSolver1D:
             tabs[NG-1] =  rho[NG-1] * vs[NG-1] * (UG[NG-1] - UG_old[NG-1])/(self.dt)
                 
             
-            # Time extrapolation
+            # Solving the displacement in time
             UG_new = self.dt**2 * self.mass_matrix_inv @ (F - self.stif_matrix_glob @ UG-tabs) + 2 * UG - UG_old
             UG_old, UG = UG, UG_new
             x_t.append(UG) 
@@ -207,7 +201,7 @@ class WaveAnimation:
         self.ax.set_ylabel('Displacement u(z,t)')
         self.lines = self.ax.plot(self.xg, self.UG, color="black", lw=1)
         
-        pass
+        #pass
     
     def update_animation(self, it, lines):
         # ... Update animation
@@ -216,7 +210,7 @@ class WaveAnimation:
         self.fig.canvas.draw()
         plt.pause(0.001)
         
-        pass
+        #pass
     
     def animate(self):
         # Animation of the plot
@@ -228,7 +222,7 @@ class WaveAnimation:
             
             if not it % self.iplot:
                 self.update_animation(it)
-        pass
+        #pass
 
 
 def main():
