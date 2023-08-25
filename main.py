@@ -4,7 +4,7 @@ Created on Thu Aug 24 18:21:55 2023
 
 @author: Lorraine
 
-Inspired by code made by H. Igel
+Inspired by codes written by H. Igel, E. Chaljub
 """
 
 import numpy as np
